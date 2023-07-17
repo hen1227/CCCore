@@ -1,0 +1,12 @@
+name: CCCore
+version: '${version}'
+main: com.henhen1227.cccore.CCCore
+api-version: '1.20'
+load: STARTUP
+authors: [Henry Abrahamsen]
+description: All the necessary components for Chicken Craft to work
+website: https://mc.henhen1227.com
+commands:
+  points:
+    description: Modify the number of points a player has.
+    usage: /points <amount>
