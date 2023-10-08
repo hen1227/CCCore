@@ -1,5 +1,5 @@
 name: CCCore
-version: '${version}'
+version: 1.0.1
 main: com.henhen1227.cccore.CCCore
 api-version: '1.20'
 load: STARTUP
@@ -9,4 +9,29 @@ website: https://mc.henhen1227.com
 commands:
   points:
     description: Modify the number of points a player has.
-    usage: /points <amount>
+    usage: /points { award|revoke } <player> <amount>
+  cccore:
+    description: Root of all Chicken Craft Core non-admin commands.
+    usage: /cccore
+  reloadws:
+    description: Reload Websocket Server.
+    usage: /reloadws
+  startchatgame:
+    description: Start a chat game.
+    usage: /startchatgame [game]
+  startevent:
+    description: Start an event.
+    usage: /startevent [event]
+  leave:
+    description: Leave game or lobby.
+    usage: /leave
+permissions:
+  cccore.default.use:
+    description: Grants user access to basic Chicken Craft Core commands
+    default: true
+  cccore.admin.use:
+    description: Grants user access of all Chicken Craft Core admin commands
+    default: op
+  cccore.admin.errors:
+    description: Allows the user to see errors in the console
+    default: op

@@ -1,56 +1,56 @@
 package com.henhen1227.cccore;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerChatEvent;
+import com.henhen1227.cccore.chatGames.ChatGameManager;
+import com.henhen1227.cccore.commands.CommandManager;
+import com.henhen1227.cccore.events.EventManager;
+import com.henhen1227.cccore.items.MagicItemManager;
+import com.henhen1227.cccore.networking.NetworkManager;
+import com.henhen1227.cccore.networking.SocketListenerHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 
 
 public final class CCCore extends JavaPlugin implements Listener {
 
-    private ChatListener chatClient;
+    public static CCCore instance;
+    public static ScoreboardManager scoreboardManager;
+
+    public static String apiKey;
 
     @Override
     public void onEnable() {
-        Logger log = this.getLogger();
+        instance = this;
+        this.saveDefaultConfig();
+        apiKey = this.getConfig().getString("api-key");
+        this.getLogger().info("Hello from Chicken Craft Core! :D");
 
-        // Print startup message
-        log.info("Chicken Craft Core has been enabled!");
+        // Load on first game tick
+        Bukkit.getScheduler().runTask(this, () -> {
+            scoreboardManager = Bukkit.getScoreboardManager();
+            EventManager.registerCoinManager();
+        });
 
-        // Plugin startup logic
-        this.getCommand("points").setExecutor(new PointsCommand());
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
+        //Networking
+        NetworkManager.register();
 
+        // Commands
+        CommandManager.registerCommands();
 
-        // Initialize the WebSocket client
-        try {
-            chatClient = new ChatListener(new URI("ws://192.168.40.50:2555"));
-            chatClient.connect();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        // Magic Items
+        MagicItemManager.registerEvents(Bukkit.getPluginManager());
+        MagicItemManager.initializeListeners();
 
-        // Initialize the chat event handler
-        ChatListenerHandler chatEventHandler = new ChatListenerHandler(chatClient);
+        // Events
+//        EventManager.registerListener();
+        EventManager.registerEvents();
 
-        // Register events
-        Bukkit.getPluginManager().registerEvents(chatEventHandler, this);
-    }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-
-    @EventHandler
-    public void onPlayerChat(PlayerChatEvent event) {
-        // Forward the chat message to the WebSocket server
-        chatClient.send(event.getMessage());
+        // Chat Games
+        ChatGameManager.registerListener();
+        ChatGameManager.registerGames();
     }
 }
