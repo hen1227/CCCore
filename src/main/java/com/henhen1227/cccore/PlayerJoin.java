@@ -1,6 +1,7 @@
 package com.henhen1227.cccore;
 
 
+import com.henhen1227.cccore.competitions.CompetitionManager;
 import com.henhen1227.cccore.networking.NetworkManager;
 
 import org.apache.http.HttpEntity;
@@ -37,6 +38,8 @@ public class PlayerJoin implements Listener {
                 String message = EntityUtils.toString(response.getEntity(), "UTF-8");
                 Bukkit.getLogger().info(message);
                 ChatManager.message(message, event.getPlayer());
+                if(CompetitionManager.getActiveCompetition() != null)
+                    ChatManager.message("A competition is active! Do /competition for more details.", event.getPlayer());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

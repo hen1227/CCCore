@@ -18,11 +18,10 @@ public class StartEventCommand implements CommandExecutor {
                 }
                 if(EventManager.startEvent(args[0])){
                     sender.sendMessage("Event started!");
-                    return true;
                 }else{
                     sender.sendMessage(String.format("Event %s not found!", args[0]));
-                    return true;
                 }
+                return true;
             }
         }
 

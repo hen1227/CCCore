@@ -1,5 +1,5 @@
 name: CCCore
-version: 1.0.1
+version: 1.1.0
 main: com.henhen1227.cccore.CCCore
 api-version: '1.20'
 load: STARTUP
@@ -25,12 +25,33 @@ commands:
   leave:
     description: Leave game or lobby.
     usage: /leave
+  shop:
+    description: Open CCCore's Shop UI.
+    usage: /shop
+  spawntrader:
+    description: Spawn villager with custom UI.
+    usage: /spawntrader <trader>
+  competition:
+    description: See the current competition and its standings.
+    usage: /competition
+  startcompetition:
+    description: Start a competition with specific id.
+    usage: /startcompetition <competition_id>
+  endcompetition:
+    description: End the current competition and assign winner.
+    usage: /endcompetition
 permissions:
   cccore.default.use:
     description: Grants user access to basic Chicken Craft Core commands
     default: true
+  cccore.shop.use:
+    description: Grants user access to Chicken Craft Core's Shop UI
+    default: op
   cccore.admin.use:
     description: Grants user access of all Chicken Craft Core admin commands
+    default: op
+  cccore.dropitems.bypass:
+    description: Allows user to drop items even when not prevented during events.
     default: op
   cccore.admin.errors:
     description: Allows the user to see errors in the console

@@ -3,6 +3,7 @@ package com.henhen1227.cccore.chatGames;
 import com.henhen1227.cccore.CCCore;
 import com.henhen1227.cccore.ChatManager;
 import com.henhen1227.cccore.commands.PointsCommand;
+import com.henhen1227.cccore.networking.NetworkManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -96,7 +97,7 @@ public class QuickMath extends ChatGame {
 
         // Reward the player and clear the active game
         PointsCommand.awardPoints(5, winner.getName());
-        ChatGameManager.recordWin(winner, getUniqueId());
+        NetworkManager.recordWin(winner, getUniqueId());
         ChatGameManager.endGame();
     }
 }

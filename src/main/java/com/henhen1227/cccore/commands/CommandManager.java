@@ -12,5 +12,10 @@ public class CommandManager {
         cccore.getCommand("startchatgame").setExecutor(new StartChatGameCommand());
         cccore.getCommand("startevent").setExecutor(new StartEventCommand());
         cccore.getCommand("leave").setExecutor(new LeaveCommand());
+        cccore.getCommand("competition").setExecutor(new CompetitionCommand());
+        cccore.getCommand("startcompetition").setExecutor(new CompetitionCommand());
+        cccore.getCommand("endcompetition").setExecutor(new CompetitionCommand());
+        cccore.getCommand("shop").setExecutor(new ShopCommand());
+        cccore.getCommand("spawntrader").setExecutor(new SpawnShopCommand());
     }
 }

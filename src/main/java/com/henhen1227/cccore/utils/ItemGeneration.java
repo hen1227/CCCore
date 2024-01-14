@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ItemGeneration {
 
     public static ItemStack createUnbreakableItem(Material material) {

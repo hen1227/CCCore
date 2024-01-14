@@ -1,11 +1,9 @@
 package com.henhen1227.cccore.events;
 
-import com.destroystokyo.paper.Namespaced;
+import com.henhen1227.cccore.CCCore;
 import com.henhen1227.cccore.ChatManager;
-import net.kyori.adventure.text.BlockNBTComponent;
-import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.henhen1227.cccore.events.shop.ItemShop;
+import com.henhen1227.cccore.events.shop.SwordShop;
 import org.bukkit.*;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
@@ -16,16 +14,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.henhen1227.cccore.utils.ItemGeneration.createUnbreakableItem;
 
@@ -48,9 +44,18 @@ public class ZombieApocalypse extends Event implements Listener {
             {1, 0, 17}
     };
 
+    private final Map<Location, ItemShop> shops = new HashMap<>();
+
+
     public ZombieApocalypse() {
         super("zombie_apocalypse");
+    }
 
+    public void registerShops(){
+//        registerShop(
+//                new Location(CCCore.instance.getServer().getWorld(getUniqueId()), 0, 0, 0),
+//                new SwordShop()
+//        );
     }
 
     @Override
@@ -70,20 +75,28 @@ public class ZombieApocalypse extends Event implements Listener {
         generateSpawners();
     }
 
+    public void registerShop(Location location, ItemShop shop) {
+        shop.showShop(location);
+        shops.put(location, shop);
+    }
+
+    public Optional<ItemShop> getShopAt(Location location) {
+        return Optional.ofNullable(shops.get(location));
+    }
 
     @Override
-    public PlayerInventory startingGear() {
-        PlayerInventory inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
+    public void setStartingGear(Player player) {
+        PlayerInventory inventory = player.getInventory();
 
         // Sword
-        inventory.setItemInMainHand(createUnbreakableItem(Material.WOODEN_SWORD));
+        inventory.setItem(0, createUnbreakableItem(Material.WOODEN_SWORD));
 
         // Pickaxe
         ItemStack pickaxe = createUnbreakableItem(Material.WOODEN_PICKAXE);
 
         ItemMeta meta = pickaxe.getItemMeta();
         meta.setDestroyableKeys(List.of(Material.SPAWNER.getKey()));
-        inventory.addItem(pickaxe);
+        inventory.setItem(1, pickaxe);
 
 
         // Chestplate
@@ -106,10 +119,8 @@ public class ZombieApocalypse extends Event implements Listener {
         inventory.setBoots(boots);
 
         // Food
-        inventory.setItem(9, new ItemStack(Material.COOKED_BEEF, 16));
+        inventory.setItem(7, new ItemStack(Material.COOKED_BEEF, 16));
         inventory.setItem(8, new ItemStack(Material.GOLDEN_APPLE, 3));
-
-        return inventory;
     }
 
     public void generateSpawnerStructure(int x, int y, int z){
@@ -247,6 +258,32 @@ public class ZombieApocalypse extends Event implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if(!event.getPlayer().getWorld().getName().equals(getUniqueId())) return;
+        if(event.getPlayer().hasPermission("cccore.dropitems.bypass") || event.getPlayer().hasPermission("cccore.admin.use")) return;
+
+        if(event.getItemDrop().getItemStack().getType() != Material.DIAMOND) {
+            event.setCancelled(true);
+            ChatManager.message("You can not drop this item!", event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof ArmorStand)) return;
+
+        Bukkit.getLogger().info("clicked armor stand");
+        Location clickedLocation = event.getRightClicked().getLocation();
+        Optional<ItemShop> shopOptional = getShopAt(clickedLocation);
+        Bukkit.getLogger().info(String.valueOf(shopOptional));
+
+        if (shopOptional.isPresent()) {
+            shopOptional.get().handleInteraction(event.getPlayer());
+            event.setCancelled(true);
         }
     }
 

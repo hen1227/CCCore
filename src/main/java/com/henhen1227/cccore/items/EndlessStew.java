@@ -49,7 +49,7 @@ public class EndlessStew extends MagicItem implements Listener {
     private final Random random = new Random();
 
     public EndlessStew() {
-        super("endless_stew");
+        super("endless_stew", 1500);
     }
 
     @EventHandler
@@ -93,7 +93,7 @@ public class EndlessStew extends MagicItem implements Listener {
     public ItemStack item(){
         List<String> lore = Arrays.asList("This stew seems to be full.","It has a strange smell...");
         // Replace the bowl with a full stew
-        ItemStack item = MagicItemManager.createItem(unique_id, Material.SUSPICIOUS_STEW, "Timeless Suspicious Stew", lore);
+        ItemStack item = MagicItemManager.createItem(unique_id, Material.SUSPICIOUS_STEW, "Timeless Suspicious Stew", lore, price);
 
         // Custom Settings
         SuspiciousStewMeta meta = (SuspiciousStewMeta) item.getItemMeta();

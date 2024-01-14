@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' // Use the latest version
 }
 
 group = 'com.henhen1227'
@@ -53,6 +54,16 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+build {
+    dependsOn shadowJar
+}
+
+shadowJar {
+    archiveBaseName.set("CCCore-${version}")
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
+
 sourceSets {
     main {
         java {
@@ -61,5 +72,25 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
         }
+    }
+}
+
+
+tasks.register('deployPlugin', Copy) {
+    dependsOn shadowJar  // or 'build' if you're using the standard build task
+
+    from shadowJar.archiveFile  // or 'build/libs' if you're using the standard build task
+    into '/Users/henryabrahamsen/Desktop/TestMinecraftServer/plugins/'
+
+    // Rename the JAR file during the copy if necessary
+    rename { String fileName ->
+        fileName.replace("CCCore-$version", "CCCore-1.1-SNAPSHOT")
+    }
+
+    doFirst {
+        println "Building and deploying CCCore v$version..."
+    }
+    doLast {
+        println "CCCore v$version deployed successfully!"
     }
 }

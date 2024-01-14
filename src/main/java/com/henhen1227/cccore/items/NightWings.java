@@ -1,6 +1,5 @@
 package com.henhen1227.cccore.items;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,7 @@ import java.util.Arrays;
 
 public class NightWings extends MagicItem implements Listener {
     public NightWings() {
-        super("night_wings");
+        super("night_wings", 1500);
     }
 
 
@@ -48,8 +47,9 @@ public class NightWings extends MagicItem implements Listener {
                 unique_id,
                 Material.ELYTRA,
                 "Wings of the Lunar Wraith",
-                Arrays.asList("A reward to the moon's champion", "these wings imbue the wearer with lunar flight.", "but only below the moon's watchful eye.")
-            );
+                Arrays.asList("A reward to the moon's champion", "these wings imbue the wearer with lunar flight.", "but only below the moon's watchful eye."),
+                price
+        );
 
         return item;
     }

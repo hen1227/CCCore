@@ -78,21 +78,4 @@ public class ChatGameManager implements Listener {
         // If a game is active, pass the chat message to the game
         activeGame.handleResponse(event.getPlayer(), guess);
     }
-
-    public static void recordWin(Player player, String gameName){
-        JSONObject data = new JSONObject();
-        data.put("username", player.getName());
-        data.put("gameType", gameName);
-
-        NetworkManager.sendPOSTRequest("/gameWin", data, (responseCode, response) -> {
-            Bukkit.getLogger().info("Response code: " + responseCode.getStatusLine().getStatusCode());
-            if(responseCode.getStatusLine().getStatusCode() == 200){
-                Bukkit.getLogger().info("Win recorded!");
-                ChatManager.message(String.format("Correct! %s won 5 points!", player.getName()));
-                ChatManager.message(String.format("%s won 5 points!", player.getName()), "cccore.admin.errors");
-            } else {
-                ChatManager.error("Error recording win!", "cccore.admin.errors");
-            }
-        });
-    }
 }

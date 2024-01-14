@@ -3,27 +3,26 @@ package com.henhen1227.cccore.items;
 import com.henhen1227.cccore.CCCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.io.BukkitObjectInputStream;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 public class InvisibleSaddle extends MagicItem implements Listener {
 
     public InvisibleSaddle() {
-        super("invisible_saddle");
+        super("invisible_saddle", 2000);
     }
 
 
@@ -89,7 +88,8 @@ public class InvisibleSaddle extends MagicItem implements Listener {
                 unique_id,
                 Material.SADDLE,
                 "Invisible Saddle",
-                Arrays.asList("Steeped in Shadows, ", "Other spooky stuff")
+                Arrays.asList("Steeped in Shadows", "and mystery.", "Use on a horse to", "make it invisible."),
+                price
         );
 
         return item;

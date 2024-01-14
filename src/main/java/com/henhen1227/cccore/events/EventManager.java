@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,34 @@ public class EventManager {
     private static final List<Event> events = new ArrayList<>();
     public static EventCoinManager coinManager;
 
-    public static void registerEvents(){
+
+
+    public static void registerEvents() {
         ZombieApocalypse zombieApocalypse = new ZombieApocalypse();
+        zombieApocalypse.registerShops();
         Bukkit.getPluginManager().registerEvents(zombieApocalypse, CCCore.instance);
         events.add(zombieApocalypse);
+
+        NoJumping noJumping = new NoJumping();
+        Bukkit.getPluginManager().registerEvents(noJumping, CCCore.instance);
+        events.add(noJumping);
+    }
+
+    public static void registerEventScheduler(){
+        // Bukkit schedule runner
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Event event : events) {
+                    if(event instanceof PeriodicEvent periodicEvent) {
+                        if (!periodicEvent.isEventTime()) {
+                            periodicEvent.teleportPlayersToLobby();
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(CCCore.instance, 0L, 20L);
     }
 
     public static void registerCoinManager(){
@@ -41,16 +65,36 @@ public class EventManager {
     }
 
     public static void teleportPlayer(Player player, String to){
+        teleportPlayer(player, to, true);
+    }
+    public static void teleportPlayer(Player player, String to, Boolean saveLocation){
         World world = Bukkit.getWorld(to);
         if(world != null) {
-            teleportPlayer(player, world);
+            teleportPlayer(player, world, saveLocation);
         }else{
-            ChatManager.error("Cannot move you to " + to + ". It does not exist");
+            ChatManager.error("Cannot move you to " + to + ". It does not exist.");
         }
     }
+
     public static void teleportPlayer(Player player, World to){
+        teleportPlayer(player, to, true);
+    }
+    public static void teleportPlayer(Player player, World to, Boolean saveLocation){
         // Assuming you want to teleport the player to the world's spawn location
         Location spawnLocation = to.getSpawnLocation();
+
+
+        // If player is in Periodic event, store their location
+        if(saveLocation) {
+            for (Event event : events) {
+                if (event instanceof PeriodicEvent periodicEvent) {
+                    if (periodicEvent.isEventWorld(player.getWorld())) {
+                        periodicEvent.savePlayerLocation(player);
+                    }
+                }
+            }
+        }
+
         // Check if sender is a player (since this code only makes sense for players)
         player.teleport(spawnLocation);
     }
@@ -63,12 +107,20 @@ public class EventManager {
         }
     }
 
+    public static void teleportAllPlayersToLobby(String uniqueId){
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if(player.getWorld().getName().equals(uniqueId)){
+                ChatManager.message("The event has ended. You have been teleported to the lobby.", player);
+                teleportPlayer(player, "lobby");
+            }
+        }
+    }
+
     public static void giveStartingGear(Event event){
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if(player.getWorld().getName().equals(event.getUniqueId())){
+            if(isInEventWorld(player)){
                 player.getInventory().clear();
-                PlayerInventory startingGear = event.startingGear();
-                player.getInventory().setContents(startingGear.getContents());
+                event.setStartingGear(player);
             }
         }
     }

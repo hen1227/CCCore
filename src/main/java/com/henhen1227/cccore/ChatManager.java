@@ -4,12 +4,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.time.Duration;
 
 public class ChatManager {
 
@@ -77,6 +80,13 @@ public class ChatManager {
 
     public static void actionMessage(String message){
         Bukkit.getServer().sendActionBar(actionComponent(message));
+    }
+
+    public static void titleMessage(String message) {
+        titleMessage(message, "");
+    }
+    public static void titleMessage(String message, String subtitle) {
+        Bukkit.getServer().showTitle(Title.title(textComponent(message), textComponent(subtitle), Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(4), Duration.ofMillis(500))));
     }
 
     // Formatting Components

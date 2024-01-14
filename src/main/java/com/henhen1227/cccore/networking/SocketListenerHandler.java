@@ -1,7 +1,6 @@
 package com.henhen1227.cccore.networking;
 
 import com.henhen1227.cccore.ChatManager;
-import com.henhen1227.cccore.PurchaseManager;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -9,9 +8,9 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
-
-import org.json.simple.JSONArray;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.json.simple.JSONObject;
 
 import java.net.URI;
@@ -47,27 +46,30 @@ public class SocketListenerHandler implements Listener {
         String itemUniqueId = (String) item.get("uniqueId");
         JSONObject location = (JSONObject) purchase.get("location");
 
-        PurchaseManager.spawnChestWithItem(world, itemUniqueId, location, (x, y, z, isBoat) ->
-            {
-                JSONObject json = new JSONObject();
-                json.put("origin", "minecraft");
-                json.put("type", "purchaseCompleted");
-                json.put("purchase", ((Number) purchase.get("id")).intValue());
-//                JSONArray position = new JSONArray();
-//                position.add(x);
-//                position.add(y);
-//                position.add(z);
-//                json.put("position", position);
-                json.put("isBoat", isBoat);
+        ChatManager.error("Tried to buy " + itemUniqueId + " through disabled method!");
+        Bukkit.getLogger().warning("Tried to buy " + itemUniqueId + " through disabled method!");
 
-
-                Bukkit.getLogger().info("Completed A Purchase!");
-                Bukkit.getLogger().info("Spawned Chest with items at ("+x+" "+y+" "+z+")");
-
-                // Forward the chat message to the WebSocket server
-                socketListener.send(json.toJSONString());
-            }
-        );
+//        PurchaseManager.spawnChestWithItem(world, itemUniqueId, location, (x, y, z, isBoat) ->
+//            {
+//                JSONObject json = new JSONObject();
+//                json.put("origin", "minecraft");
+//                json.put("type", "purchaseCompleted");
+//                json.put("purchase", ((Number) purchase.get("id")).intValue());
+////                JSONArray position = new JSONArray();
+////                position.add(x);
+////                position.add(y);
+////                position.add(z);
+////                json.put("position", position);
+//                json.put("isBoat", isBoat);
+//
+//
+//                Bukkit.getLogger().info("Completed A Purchase!");
+//                Bukkit.getLogger().info("Spawned Chest with items at ("+x+" "+y+" "+z+")");
+//
+//                // Forward the chat message to the WebSocket server
+//                socketListener.send(json.toJSONString());
+//            }
+//        );
     }
 
     public void sendWebsocketMessage(String message, String type){
@@ -100,18 +102,18 @@ public class SocketListenerHandler implements Listener {
             case 0:
                 delay = 2000;
                 break;
-            case 1:
-                delay = 5000;
-                break;
-            case 2:
-                delay = 10000;
-                break;
-            case 3:
-                delay = 30000;
-                break;
-            case 4:
-                delay = 60000;
-                break;
+//            case 1:
+//                delay = 5000;
+//                break;
+//            case 2:
+//                delay = 10000;
+//                break;
+//            case 3:
+//                delay = 30000;
+//                break;
+//            case 4:
+//                delay = 60000;
+//                break;
 //            case 5:
 //                delay = 300000;
 //                break;

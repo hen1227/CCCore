@@ -60,13 +60,23 @@ public class MagicItemManager {
         }, 0L, 20L * 60L * 60L * 24L);  // 20 ticks/second * 60 seconds/minute * 60 minutes/hour * 24 hours/day
     }
 
+
     public static ItemStack getItem(String uniqueId) {
-        Bukkit.getLogger().info("Looking for item " + uniqueId);
-        Bukkit.getLogger().info("In list " + magicItems.toString());
+        return getItem(uniqueId, false);
+    }
+
+    public static ItemStack getItem(String uniqueId, boolean includePricePrefix) {
+
         for(MagicItem magicItem : magicItems){
             if(Objects.equals(magicItem.unique_id, uniqueId)){
-                Bukkit.getLogger().info("Found item " + magicItem.unique_id);
-                return magicItem.item();
+                if (!includePricePrefix) return magicItem.item();
+
+                ItemStack itemStack = magicItem.item();
+                ItemMeta meta = itemStack.getItemMeta();
+                meta.setDisplayName("§6§l✦" + magicItem.price + "§r " + meta.getDisplayName());
+                itemStack.setItemMeta(meta);
+
+                return itemStack;
             }
         }
         return defaultItem();
@@ -88,7 +98,7 @@ public class MagicItemManager {
 
     // TODO: Add enchantments
     // TODO: Add Characteristics such as Unbreakable
-    public static ItemStack createItem(String uniqueId, Material material, String name, List<String> lore){
+    public static ItemStack createItem(String uniqueId, Material material, String name, List<String> lore, int price){
         ItemStack itemStack = new ItemStack(material);
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -102,6 +112,9 @@ public class MagicItemManager {
         // Set unique ID
         PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
         dataContainer.set(new NamespacedKey(CCCore.instance, "unique_id"), PersistentDataType.STRING, uniqueId);
+
+        // Set price
+        dataContainer.set(new NamespacedKey(CCCore.instance, "price"), PersistentDataType.INTEGER, price);
 
         itemStack.setItemMeta(meta);
 

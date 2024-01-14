@@ -1,9 +1,9 @@
 package com.henhen1227.cccore.items;
 
 import com.henhen1227.cccore.CCCore;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -15,7 +15,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -46,7 +45,7 @@ public class RandomCompass extends MagicItem implements Listener {
     };
 
     public RandomCompass() {
-        super(RandomCompass.unique_id);
+        super(RandomCompass.unique_id, 400);
     }
 
 
@@ -80,7 +79,12 @@ public class RandomCompass extends MagicItem implements Listener {
 
     @Override
     public ItemStack item(){
-        ItemStack item = MagicItemManager.createItem(unique_id, Material.COMPASS, "Wanderer's Compass", Arrays.asList("Help you get where ever the compass desires"));
+        ItemStack item = MagicItemManager.createItem(
+                unique_id,
+                Material.COMPASS,
+                "Wanderer's Compass",
+                Arrays.asList("Help you get where ever the compass desires"),
+                price);
 
         // Custom Settings
         CompassMeta meta =  (CompassMeta) item.getItemMeta();
